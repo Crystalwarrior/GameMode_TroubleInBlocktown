@@ -1,4 +1,4 @@
-serverCmdStartGame(%this)
+function serverCmdStartGame(%this)
 {
 	if(!%this.isAdmin)
 		return;
@@ -9,7 +9,7 @@ serverCmdStartGame(%this)
 	$defaultMiniGame.startGame();
 }
 
-serverCmdStopGame(%this)
+function serverCmdStopGame(%this)
 {
 	if(!%this.isAdmin)
 		return;

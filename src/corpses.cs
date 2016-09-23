@@ -108,7 +108,7 @@ function Player::findCorpseRayCast(%obj)
 if (!isObject(CorpseGroup))
 	new SimSet(CorpseGroup);
 
-package TIB_Corpses
+package BT_Corpses
 {
 	function Player::mountImage(%this, %image, %slot, %loaded, %skintag)
 	{
@@ -119,14 +119,9 @@ package TIB_Corpses
 
 	function Player::removeBody(%this)
 	{
-		if (isObject(%this.origClient))
-			%this.origClient.corpse = "";
-		if (isObject(%this.holder))
-		{
-			%this.holder.heldCorpse = "";
-			%this.holder.playThread(2, "root");
-		}
-		return parent::removeBody(%this);
+		if (!%this.isBody)
+			return Parent::removeBody(%this);
+		return;
 	}
 
 	function Armor::onTrigger(%this, %obj, %slot, %state)
@@ -229,11 +224,11 @@ package TIB_Corpses
 			%sourceClientName = "";
 
 		echo("\c4" SPC %sourceClientName SPC "killed" SPC (%clientName $= %sourceClientName ? "himself" : %clientName));
-		// removed mini-game checks here
+		%client.miniGame.checkLastManStanding();
 		// removed death message print here
 		// removed %message and %sourceClientName arguments
 		messageClient(%client, 'MsgYourDeath', '', %clientName, '', %client.miniGame.respawnTime);
 		//commandToClient(%client, 'CenterPrint', "", 1);
 	}
 };
-activatePackage(TIB_Corpses);
+activatePackage(BT_Corpses);

@@ -229,7 +229,7 @@ function setEnvironment(%varName, %value)
             GroundPlane.blend = getWord(GroundPlane.color, 3) < 255;
             GroundPlane.sendUpdate();
 
-            Sky.renderBottomTexture = getWord(GroundPlane.color, 3) <= 0);
+            Sky.renderBottomTexture = getWord(GroundPlane.color, 3) <= 0;
             Sky.noRenderBans = Sky.renderBottomTexture;
             Sky.sendUpdate();
         }
