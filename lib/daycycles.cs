@@ -7,6 +7,21 @@ function getDayCycleTime()
     return %time - mFloor(%time);
 }
 
+function calculateDaycycleFraction() {
+    %len = DayCycle.DayLength;
+    return ($Sim::Time % %len) / %len;
+}
+
+function setDayCycleTime(%frac) {
+    %time = calculateDayCycleFraction();
+    %off = %frac - %time;
+    if(%off < 0) {
+        %off = 1 + %off;
+    }
+    $EnvGuiServer::DayOffset = %off;
+    DayCycle.setDayOffset(%off);
+}
+
 function getSunVector()
 {
     %azim = mDegToRad($EnvGuiServer::SunAzimuth);

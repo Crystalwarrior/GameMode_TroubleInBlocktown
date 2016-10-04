@@ -168,6 +168,7 @@ package BT_Corpses
 		{
 			%player.changeDatablock(PlayerCorpseArmor); //Doing this before client is nullified is important for appearance stuff
 			%player.playDeathAnimation(); //...still call this because datablock switch fucks with anims
+			%player.playThread(0, "death1"); //Trying to fix "die standing" issue (spoiler alert: breaks when corpse is picked up)
 			%player.setShapeName("", 8564862);
 			if (isObject(%player.tempBrick))
 			{
