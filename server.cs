@@ -1,6 +1,9 @@
 $BT::Path = filePath(expandFileName("./description.txt")) @ "/";
+exec("./lib/addExtraResource.cs");
 exec("./lib/daycycles.cs");
 exec("./lib/environment.cs");
+
+exec("./src/resources.cs");
 
 exec("./src/gamemodes.cs");
 exec("./src/gamemodes/classic.cs");

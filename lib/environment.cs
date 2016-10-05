@@ -45,14 +45,14 @@ function setEnvironment(%varName, %value)
 
     case "SunFlareTopIdx":
         $EnvGuiServer::SunFlareTopIdx = mClamp(%value, 0, $EnvGuiServer::SunFlareCount);
-        %top = $EnvGuiServer::SunFlareTop[$EnvGuiServer::SunFlareTopIdx];
-        %bottom = $EnvGuiServer::SunFlareBottom[$EnvGuiServer::SunFlareBottomIdx];
+        %top = $EnvGuiServer::SunFlare[$EnvGuiServer::SunFlareTopIdx];
+        %bottom = $EnvGuiServer::SunFlare[$EnvGuiServer::SunFlareBottomIdx];
         SunLight.setFlareBitmaps(%top, %bottom);
 
     case "SunFlareBottomIdx":
         $EnvGuiServer::SunFlareBottomIdx = mClamp(%value, 0, $EnvGuiServer::SunFlareCount);
-        %top = $EnvGuiServer::SunFlareTop[$EnvGuiServer::SunFlareTopIdx];
-        %bottom = $EnvGuiServer::SunFlareBottom[$EnvGuiServer::SunFlareBottomIdx];
+        %top = $EnvGuiServer::SunFlare[$EnvGuiServer::SunFlareTopIdx];
+        %bottom = $EnvGuiServer::SunFlare[$EnvGuiServer::SunFlareBottomIdx];
         SunLight.setFlareBitmaps(%top, %bottom);
 
     case "DayOffset":
@@ -267,4 +267,13 @@ function setEnvironment(%varName, %value)
     }
 
     return 1;
+}
+
+function findSunFlareIndex(%file)
+{
+    for (%i = 0; %i < $EnvGuiServer::SunFlareCount; %i++)
+    {
+        if ($EnvGuiServer::SunFlare[%i] $= %file)
+            return %i;
+    }
 }

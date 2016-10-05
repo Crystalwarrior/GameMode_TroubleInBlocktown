@@ -225,7 +225,8 @@ package BT_Corpses
 			%sourceClientName = "";
 
 		echo("\c4" SPC %sourceClientName SPC "killed" SPC (%clientName $= %sourceClientName ? "himself" : %clientName));
-		%client.miniGame.checkLastManStanding();
+		if(isObject(%client.miniGame))
+			%client.miniGame.checkLastManStanding();
 		// removed death message print here
 		// removed %message and %sourceClientName arguments
 		messageClient(%client, 'MsgYourDeath', '', %clientName, '', %client.miniGame.respawnTime);
