@@ -10,6 +10,7 @@ function BTGameMode_Classic::onStart(%this)
 {
 	%this.initRoles();
 	%this.assignRoles();
+	%this.assignHouses();
 	%this.testLoop();
 }
 
@@ -19,6 +20,16 @@ function BTGameMode_Classic::onEnd(%this,%msg)
 		return;
 	talk(%msg);
 	$defaultMiniGame.resetSchedule = $defaultMiniGame.schedule(5000, stopGame);
+}
+
+function BTGameMode_Classic::onDay(%this)
+{
+	$defaultMiniGame.setWeapons(0);
+}
+
+function BTGameMode_Classic::onNight(%this)
+{
+	$defaultMiniGame.setWeapons(1);
 }
 
 function BTGameMode_Classic::testLoop(%this)

@@ -7,6 +7,6 @@ if (!isObject(BTRole_Innocent))
 		name = "Innocent";
 		alignment = "Town";
 
-		tool[0] = nameToID(GunItem);
+		tool[0] = GunItem;
 	};
 }

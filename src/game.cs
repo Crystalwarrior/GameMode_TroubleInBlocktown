@@ -41,6 +41,31 @@ function MiniGameSO::stopGame(%this)
 	%this.respawnTime = 3;
 }
 
+gunImage.isWeapon = 1;
+function MiniGameSO::SetWeapons(%this, %tog)
+{
+	%this.noWeapons = !%tog;
+	for (%i = 0; %i < %this.numMembers; %i++)
+	{
+		%member = %this.member[%i];
+		%player = %member.player;
+		if (!isObject(%player))
+			continue;
+		if (%tog)
+		{
+			if(isObject(%player.getMountedImage(0)) || !isObject(%item = %player.tool[%player.currTool]))
+				continue;
+			%player.mountImage(%item.image);
+			fixArmReady(%player);
+		}
+		else
+		{
+			if (%player.getMountedImage(0) && %player.getMountedImage(0).isWeapon)
+				%player.unMountImage(0);
+		}
+	}
+}
+
 function MiniGameSO::initDayCycle(%this, %day)
 {
 	if(%day $= "")
@@ -66,9 +91,10 @@ function MiniGameSO::DoDayCycle(%this, %day)
 		SunLight.sendUpdate();
 		$EnvGuiServer::DayCycleFile = "Add-Ons/DayCycle_BlocktownTrials/day.daycycle";
 		loadDayCycle($EnvGuiServer::DayCycleFile);
-		$EnvGuiServer::DayLength = 300 * 0.1;
+		$EnvGuiServer::DayLength = 300 * 0.5;
 		DayCycle.setDayLength($EnvGuiServer::DayLength);
 		setDayCycleTime(0.95);
+		%this.gameModeObj.call("onDay");
 	}
 	else
 	{
@@ -95,9 +121,10 @@ function MiniGameSO::DoDayCycle(%this, %day)
 		SunLight.sendUpdate();
 		$EnvGuiServer::DayCycleFile = "Add-Ons/DayCycle_BlocktownTrials/night.daycycle";
 		loadDayCycle($EnvGuiServer::DayCycleFile);
-		$EnvGuiServer::DayLength = 240 * 0.1;
+		$EnvGuiServer::DayLength = 240 * 0.5;
 		DayCycle.setDayLength($EnvGuiServer::DayLength);
-		setDayCycleTime(0.95);		
+		setDayCycleTime(0.95);	
+		%this.gameModeObj.call("onNight");	
 	}
 	%this.dayPhase++;
 	talk("dayphase" SPC %this.dayPhase);
@@ -118,6 +145,13 @@ function MiniGameSO::disableDayCycle(%this)
 
 package BT_Main
 {
+	function Player::mountImage(%this, %image, %slot, %loaded, %skinTag)
+	{
+		if (isObject(%this.client) && %this.client.inDefaultGame() && (%image.isWeapon && $DefaultMiniGame.noWeapons))
+			return;
+		parent::mountImage(%this, %image, %slot, %loaded, %skinTag);
+	}
+
 	function MiniGameSO::checkLastManStanding(%this)
 	{
 		if (!isObject(%this.gameModeObj))
@@ -133,6 +167,25 @@ package BT_Main
 		// Play nice with the default rate limiting.
 		if (getSimTime() - %this.lastResetTime < 5000)
 			return;
+
+		// Close *all* doors
+		%count = BrickGroup_888888.getCount();
+
+		for (%i = 0; %i < %count; %i++)
+		{
+			%brick = BrickGroup_888888.getObject(%i);
+
+			%data = %brick.getDataBlock();
+			%name = %brick.getName();
+			if (%data.isDoor)
+			{
+				%brick.lockState = false;
+				%brick.doorHits = 0;
+				%brick.broken = false;
+				%brick.setDataBlock(%brick.isCCW ? %data.closedCCW : %data.closedCW);
+				%brick.doorMaxHits = 4;
+			}
+		}
 
 		if (isObject(CorpseGroup))
 			CorpseGroup.deleteAll();

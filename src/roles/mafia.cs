@@ -7,6 +7,6 @@ if (!isObject(BTRole_Mafia))
 		name = "Mafioso";
 		alignment = "Mafia";
 
-		tool[0] = nameToID(GunItem);
+		tool[0] = GunItem;
 	};
 }

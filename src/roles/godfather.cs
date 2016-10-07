@@ -10,6 +10,6 @@ if (!isObject(BTRole_Godfather))
 
 		max = 1; //Only one godfather per game
 
-		tool[0] = nameToID(GunItem);
+		tool[0] = GunItem;
 	};
 }
