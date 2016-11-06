@@ -1,5 +1,7 @@
 //Main game logic and stuff
 $BT::GameMode = BTGameMode_Classic;
+$BT::DayLength = 300 * 0.5;
+$BT::NightLength = 240 * 0.5;
 
 function MiniGameSO::initGameMode(%this)
 {
@@ -56,13 +58,13 @@ function MiniGameSO::SetWeapons(%this, %tog)
 			if(isObject(%player.getMountedImage(0)) || !isObject(%item = %player.tool[%player.currTool]))
 				continue;
 			%player.mountImage(%item.image);
-			fixArmReady(%player);
 		}
 		else
 		{
 			if (%player.getMountedImage(0) && %player.getMountedImage(0).isWeapon)
 				%player.unMountImage(0);
 		}
+		fixArmReady(%player);
 	}
 }
 
@@ -83,6 +85,7 @@ function MiniGameSO::initDayCycle(%this, %day)
 function MiniGameSO::DoDayCycle(%this, %day)
 {
 	cancel(%this.daySchedule);
+
 	if(%day)
 	{
 		setEnvironment("sunFlareTopIdx", findSunFlareIndex("base/lighting/corona2.png"));
@@ -91,7 +94,7 @@ function MiniGameSO::DoDayCycle(%this, %day)
 		SunLight.sendUpdate();
 		$EnvGuiServer::DayCycleFile = "Add-Ons/DayCycle_BlocktownTrials/day.daycycle";
 		loadDayCycle($EnvGuiServer::DayCycleFile);
-		$EnvGuiServer::DayLength = 300 * 0.5;
+		$EnvGuiServer::DayLength = $BT::DayLength;
 		DayCycle.setDayLength($EnvGuiServer::DayLength);
 		setDayCycleTime(0.95);
 		%this.gameModeObj.call("onDay");
@@ -121,13 +124,13 @@ function MiniGameSO::DoDayCycle(%this, %day)
 		SunLight.sendUpdate();
 		$EnvGuiServer::DayCycleFile = "Add-Ons/DayCycle_BlocktownTrials/night.daycycle";
 		loadDayCycle($EnvGuiServer::DayCycleFile);
-		$EnvGuiServer::DayLength = 240 * 0.5;
+		$EnvGuiServer::DayLength = $BT::NightLength;
 		DayCycle.setDayLength($EnvGuiServer::DayLength);
 		setDayCycleTime(0.95);	
 		%this.gameModeObj.call("onNight");	
 	}
 	%this.dayPhase++;
-	talk("dayphase" SPC %this.dayPhase);
+	%this.lastCycle = getSimTime();
 	%this.daySchedule = %this.schedule((DayCycle.dayLength * 1000) * 0.7, DoDayCycle, !%day);
 }
 
@@ -148,7 +151,10 @@ package BT_Main
 	function Player::mountImage(%this, %image, %slot, %loaded, %skinTag)
 	{
 		if (isObject(%this.client) && %this.client.inDefaultGame() && (%image.isWeapon && $DefaultMiniGame.noWeapons))
+		{
+			fixArmReady(%this);
 			return;
+		}
 		parent::mountImage(%this, %image, %slot, %loaded, %skinTag);
 	}
 

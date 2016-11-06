@@ -8,7 +8,5 @@ if (!isObject(BTRole_Jailor))
 		alignment = "Town";
 
 		max = 1; //Only one jailor per game
-
-		tool[0] = GunItem;
 	};
 }

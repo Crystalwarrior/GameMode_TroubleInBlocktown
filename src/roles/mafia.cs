@@ -6,6 +6,7 @@ if (!isObject(BTRole_Mafia))
 		color = "FF0000";
 		name = "Mafioso";
 		alignment = "Mafia";
+		showTeammates = true;
 
 		tool[0] = GunItem;
 	};

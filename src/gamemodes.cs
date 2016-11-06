@@ -149,6 +149,21 @@ function BTGameMode::assignRoles(%this)
 				talk("error, failed to assign role");
 		}
 	}
+	%this.greetRoles();
+}
+
+function BTGameMode::greetRoles(%this)
+{
+	%miniGame = $defaultMiniGame;
+	%count = %miniGame.numMembers;
+	for (%i = 0; %i < %count; %i++)
+	{
+		%member = %miniGame.member[%i];
+		if (!isObject(%member.role))
+			continue;
+
+		%member.role.greetRole(%member); //We do this post-role assigning so mafias can get a list of their friendos.
+	}
 }
 
 function BTGameMode::assignRole(%this, %client, %role)
@@ -160,6 +175,7 @@ function BTGameMode::assignRole(%this, %client, %role)
 	if(!isObject(%client.player))
 		return;
 
+	//Equip the player
 	%maxtools = %client.player.getDatablock().maxTools;
 	for(%i = 0; %i < %maxtools; %i++)
 	{
@@ -168,6 +184,6 @@ function BTGameMode::assignRole(%this, %client, %role)
 		%client.player.tool[%i] = %client.role.tool[%i].getID();
 		messageClient(%client, 'MsgItemPickup', '', %i, %client.player.tool[%i]);
 	}
-
-	messageClient(%client, '', "\c6You are <color:" @ %client.role.color @ ">" @ %client.role.name @ "\c6! You are aligned with \c3"@ %client.role.alignment);
+	//Call onAssigned for special role stuffs if there's any (WARNING: this is done BEFORE all roles are assigned!)
+	%client.role.onAssigned(%client);
 }

@@ -6,6 +6,7 @@ if (!isObject(BTRole_Godfather))
 		color = "FFFFFF";
 		name = "Godfather";
 		alignment = "Mafia";
+		showTeammates = true;
 		fake_alignment = "Town"; //Investigation result
 
 		max = 1; //Only one godfather per game

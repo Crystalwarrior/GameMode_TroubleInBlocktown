@@ -12,6 +12,29 @@ function calculateDaycycleFraction() {
     return ($Sim::Time % %len) / %len;
 }
 
+function getDayCycleTimeString(%time, %mod12) {
+    %time = getTimeString(mFloor((%time * 86400) / 60));
+
+    if (!%mod12) {
+        if (strLen(%time) == 3) {
+            return 0 @ %time;
+        }
+
+        return %time;
+    }
+
+    %time = strReplace(%time, ":", " ");
+
+    %hour = getWord(%time, 0);
+    %mins = getWord(%time, 1);
+
+    if (%hour >= 13) {
+        return %hour - 12 @ ":" @ %mins SPC "PM";
+    }
+
+    return %hour @ ":" @ %mins SPC "AM";
+}
+
 function setDayCycleTime(%frac) {
     %time = calculateDayCycleFraction();
     %off = %frac - %time;

@@ -25,17 +25,24 @@ function BTGameMode_Classic::onEnd(%this,%msg)
 function BTGameMode_Classic::onDay(%this)
 {
 	$defaultMiniGame.setWeapons(0);
+	%this.trialSchedule = %this.schedule((DayCycle.dayLength * 1000) * 0.25, doTrial);
+}
+
+function BTGameMode_Classic::doTrial(%this)
+{
+	talk("OMG ITS TRIAL TIME OK");
 }
 
 function BTGameMode_Classic::onNight(%this)
 {
 	$defaultMiniGame.setWeapons(1);
+	talk("go to bed or in 30 seconds you'll be super drowsy!!!");
 }
 
 function BTGameMode_Classic::testLoop(%this)
 {
 	cancel(%this.testLoop);
-	bottomPrintAll("\c6DAYCYCLE: " @ getDayCycleTime());
+	bottomPrintAll("\c6ass");
 	%this.testLoop = %this.schedule(100, testLoop);
 }
 
@@ -65,7 +72,7 @@ function BTGameMode_Classic::initRoles(%this)
 
 function BTGameMode_Classic::cleanUp(%this)
 {
-	//do cleanup stuff
+	cancel(%this.trialSchedule);
 }
 
 function BTGameMode_Classic::checkLastManStanding(%this)
