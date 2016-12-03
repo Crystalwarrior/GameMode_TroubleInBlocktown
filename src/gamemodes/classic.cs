@@ -42,7 +42,14 @@ function BTGameMode_Classic::onNight(%this)
 function BTGameMode_Classic::testLoop(%this)
 {
 	cancel(%this.testLoop);
-	bottomPrintAll("\c6ass");
+	//THIS WHOLE ENTIRE THING IS SUCH A PAIN LIKE WHY CAN'T I JUST MAKE IT SO 10 PM IS NIGHT AND 6 AM IS DAY LIKE WHAT THE HELL MAN
+	%nightcycle = $defaultMiniGame.lastNightCycle;
+	if (%nightcycle $= "")
+		%nightcycle = $defaultMiniGame.lastDayCycle - ($BT::NightLength * 1000);
+	%float = ((getSimTime() - %nightcycle)/1000) / ($BT::NightLength + $BT::DayLength);
+	%float += 0; //Offset float
+	%float -= mFloor(%float);
+	bottomPrintAll(%float SPC getDayCycleTimeString(%float, 1));
 	%this.testLoop = %this.schedule(100, testLoop);
 }
 

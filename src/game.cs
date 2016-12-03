@@ -94,10 +94,11 @@ function MiniGameSO::DoDayCycle(%this, %day)
 		SunLight.sendUpdate();
 		$EnvGuiServer::DayCycleFile = "Add-Ons/DayCycle_BlocktownTrials/day.daycycle";
 		loadDayCycle($EnvGuiServer::DayCycleFile);
-		$EnvGuiServer::DayLength = $BT::DayLength;
+		$EnvGuiServer::DayLength = $BT::DayLength / 0.7; //So during schedule multiplication its an accurate amount of time
 		DayCycle.setDayLength($EnvGuiServer::DayLength);
 		setDayCycleTime(0.95);
 		%this.gameModeObj.call("onDay");
+		%this.lastDayCycle = getSimTime();
 	}
 	else
 	{
@@ -124,13 +125,13 @@ function MiniGameSO::DoDayCycle(%this, %day)
 		SunLight.sendUpdate();
 		$EnvGuiServer::DayCycleFile = "Add-Ons/DayCycle_BlocktownTrials/night.daycycle";
 		loadDayCycle($EnvGuiServer::DayCycleFile);
-		$EnvGuiServer::DayLength = $BT::NightLength;
+		$EnvGuiServer::DayLength = $BT::NightLength / 0.7; //So during schedule multiplication its an accurate amount of time
 		DayCycle.setDayLength($EnvGuiServer::DayLength);
 		setDayCycleTime(0.95);	
-		%this.gameModeObj.call("onNight");	
+		%this.gameModeObj.call("onNight");
+		%this.lastNightCycle = getSimTime();
 	}
 	%this.dayPhase++;
-	%this.lastCycle = getSimTime();
 	%this.daySchedule = %this.schedule((DayCycle.dayLength * 1000) * 0.7, DoDayCycle, !%day);
 }
 
@@ -143,6 +144,8 @@ function MiniGameSO::isNight(%this)
 function MiniGameSO::disableDayCycle(%this)
 {
 	cancel(%this.daySchedule);
+	%this.lastDayCycle = "";
+	%this.lastNightCycle = "";
 	setEnvironment("DayCycleEnabled", 0);
 }
 
